@@ -1,0 +1,55 @@
+.header {
+    height: 70px;
+    padding: 0 30px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    background-color: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+
+    box-sizing: border-box;
+}
+
+/* Left */
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.hospital-logo {
+    width: 45px;
+    height: 45px;
+    object-fit: contain;
+}
+
+.header-left h2 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+
+/* Right */
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.profile-pic {
+    width: 42px;
+    height: 42px;
+
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-name {
+    font-size: 15px;
+    font-weight: 500;
+}
