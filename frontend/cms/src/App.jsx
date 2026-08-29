@@ -1,15 +1,25 @@
-import { useState } from 'react'
-import './App.css'
-import Header from './components/doctor/Header'
+import { Routes, Route } from "react-router-dom";
+import DoctorLayout from "./components/layout/DoctorLayout";
 
-function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-   <>
-   <Header />
-   </>
-  )
+function Dashboard() {
+    return <h1>Dashboard</h1>;
 }
 
-export default App
+function Patients() {
+    return <h1>Patients</h1>;
+}
+
+function App() {
+    return (
+        <Routes>
+            <Route element={<DoctorLayout />}>
+
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/patients" element={<Patients />} />
+
+            </Route>
+        </Routes>
+    );
+}
+
+export default App;
