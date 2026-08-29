@@ -1,6 +1,6 @@
 import "./Header.css";
-import hospitalLogo from "../../assets/images/hospital-logo.png";
-import profilePic from "../../assets/images/profile.png";
+import hospitalLogo from "../../assets/hospital_logo.png";
+import profilePic from "../../assets/profilePic.png";
 
 function Header() {
     return (
