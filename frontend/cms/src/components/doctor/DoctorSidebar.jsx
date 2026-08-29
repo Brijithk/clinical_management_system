@@ -11,7 +11,7 @@ function DoctorSidebar() {
             <nav className="doctor-sidebar-menu">
 
                 <NavLink
-                    to="/dashboard"
+                    to="/"
                     className={({ isActive }) =>
                         isActive
                             ? "doctor-menu-item active"
