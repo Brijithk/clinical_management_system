@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 import "./DoctorSidebar.css";
 
 import dashboardIcon from "../../assets/dashboard.png";
-import patientsIcon from "../../assets/dashboard.png";
+import patientsIcon from "../../assets/online-booking.png";
 
 function DoctorSidebar() {
     return (
@@ -31,7 +31,7 @@ function DoctorSidebar() {
                     }
                 >
                     <img src={patientsIcon} alt="" />
-                    <span>Patients</span>
+                    <span>Appointments</span>
                 </NavLink>
 
             </nav>
