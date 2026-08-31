@@ -65,9 +65,9 @@ function Login() {
         else if (username === "receptionist") {
             navigate("/receptionist");
         }
-        // else if (username === "admin") {
-        //     navigate("/admin/dashboard");
-        // }
+        else if (username === "admin") {
+            navigate("/admin");
+        }
         else {
             alert("Invalid username");
         }

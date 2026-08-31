@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from doctor.models import Consultation,PrescribedLab
-from administrator.models import UserProfile
-from receptionist.models import Patient,Staff
+from administrator.models import UserProfile,Staff
+from receptionist.models import Patient
 
 class ConsultationSerializer(serializers.ModelSerializer):
     class Meta:

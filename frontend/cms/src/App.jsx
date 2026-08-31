@@ -32,6 +32,9 @@ import ReceptionistLayout from "./components/layout/ReceptionistLayout";
 import DoctorDashboard from "./pages/Doctor/DoctorDashboard";
 import ReceptionistDashboard from "./pages/Receptionist/ReceptionistDashboard";
 import ReceptionistPatientList from "./pages/Receptionist/ReceptionistPatientList";
+import AdminDashboard from "./pages/Admin/AdminDashboard";
+import AdminLayout from "./components/layout/AdminLayout";
+import AdminStaffList from "./pages/Admin/AdminStaffList";
 function Dashboard() {
     return <h1>Doctor Dashboard</h1>;
 }
@@ -70,7 +73,24 @@ function App() {
                 />
 
             </Route>
+          <Route element={<AdminLayout />}>
 
+    <Route
+        path="/admin"
+        element={<AdminDashboard />}
+    />
+
+    {/* <Route
+        path="/admin/patients"
+        element={<AdminPatientList />}
+    /> */}
+
+    <Route
+        path="/admin/staff"
+        element={<AdminStaffList />}
+    />
+
+</Route>
         </Routes>
     );
 }

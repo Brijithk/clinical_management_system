@@ -52,7 +52,10 @@ class Staff(models.Model):
         ("O+", "O+"),
         ("O-", "O-"),
     ]
-
+    STATUS_CHOICES = [
+    ("Active", "Active"),
+    ("On Leave", "On Leave"),
+    ]
     # Staff ID
     staff_id = models.CharField(
         max_length=20,
@@ -116,7 +119,11 @@ class Staff(models.Model):
     password = models.CharField(
         max_length=255
     )
-
+    status = models.CharField(
+    max_length=20,
+    choices=STATUS_CHOICES,
+    default="Active"
+    )
     def save(self, *args, **kwargs):
 
         if not self.staff_id:
