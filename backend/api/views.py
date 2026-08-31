@@ -1,7 +1,8 @@
 # from django.shortcuts import render
 # from django.http import JsonResponse
 from doctor.models import Consultation,PrescribedLab
-from .serializers import ConsultationSerializer,UserSerializer,PrescribedLabSerializer
+from receptionist.models import Patient , Staff
+from .serializers import ConsultationSerializer,UserSerializer,PrescribedLabSerializer,PatientSerializer, StaffSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -90,6 +91,15 @@ class UserDetail(APIView):
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+class StaffListCreateView(generics.ListCreateAPIView):
+    queryset = Staff.objects.all()
+    serializer_class = StaffSerializer
+
+
+class StaffDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Staff.objects.all()
+    serializer_class = StaffSerializer
+
 class PrescribedLabView(mixins.ListModelMixin,mixins.CreateModelMixin,generics.GenericAPIView):
     queryset=PrescribedLab.objects.all()
     serializer_class = PrescribedLabSerializer
@@ -106,4 +116,13 @@ class PrescribedLabDetailView(mixins.RetrieveModelMixin,generics.GenericAPIView)
 
     def get(self,request,pk):
         return self.retrieve(request,pk)
+
+#receptionist
+class PatientListCreateView(generics.ListCreateAPIView):
+    queryset = Patient.objects.all()
+    serializer_class = PatientSerializer
+
+class PatientDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Patient.objects.all()
+    serializer_class = PatientSerializer
             
