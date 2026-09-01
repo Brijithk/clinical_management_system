@@ -1,22 +1,21 @@
-
 import { NavLink } from "react-router-dom";
-import "./AdminSidebar.css";
+import "./PharmacistSidebar.css";
 
 import dashboardIcon from "../../assets/dashboard.png";
 import patientsIcon from "../../assets/online-booking.png";
 
-function AdminSidebar() {
+function PharmacistSidebar() {
     return (
-        <aside className="admin-sidebar">
+        <aside className="pharmacist-sidebar">
 
-            <nav className="admin-sidebar-menu">
+            <nav className="pharmacist-sidebar-menu">
 
                 <NavLink
-                    to="/admin/dashboard"
+                    to="/pharmacist/dashboard"
                     className={({ isActive }) =>
                         isActive
-                            ? "admin-menu-item active"
-                            : "admin-menu-item"
+                            ? "pharmacist-menu-item active"
+                            : "pharmacist-menu-item"
                     }
                 >
                     <img src={dashboardIcon} alt="" />
@@ -24,40 +23,40 @@ function AdminSidebar() {
                 </NavLink>
 
                 <NavLink
-                    to="/admin/staff"
+                    to="/pharmacist/prescriptions"
                     className={({ isActive }) =>
                         isActive
-                            ? "admin-menu-item active"
-                            : "admin-menu-item"
+                            ? "pharmacist-menu-item active"
+                            : "pharmacist-menu-item"
                     }
                 >
                     <img src={patientsIcon} alt="" />
-                    <span>Staff List</span>
+                    <span>Prescriptions</span>
                 </NavLink>
 
                 <NavLink
-                    to="/admin/doctors"
+                    to="/pharmacist/inventory"
                     className={({ isActive }) =>
                         isActive
-                            ? "admin-menu-item active"
-                            : "admin-menu-item"
+                            ? "pharmacist-menu-item active"
+                            : "pharmacist-menu-item"
                     }
                 >
                     <img src={patientsIcon} alt="" />
-                    <span>Doctor List</span>
+                    <span>Inventory</span>
                 </NavLink>
 
-                {/* <NavLink
-                    to="/patients"
+                <NavLink
+                    to="/pharmacist/billing"
                     className={({ isActive }) =>
                         isActive
-                            ? "admin-menu-item active"
-                            : "admin-menu-item"
+                            ? "pharmacist-menu-item active"
+                            : "pharmacist-menu-item"
                     }
                 >
                     <img src={patientsIcon} alt="" />
                     <span>Billing</span>
-                </NavLink> */}
+                </NavLink>
 
             </nav>
 
@@ -65,5 +64,4 @@ function AdminSidebar() {
     );
 }
 
-export default AdminSidebar;
-
+export default PharmacistSidebar;

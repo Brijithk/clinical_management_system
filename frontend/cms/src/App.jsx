@@ -24,7 +24,7 @@
 
 // export default App;
 import { Routes, Route } from "react-router-dom";
-
+import LabTechLayout from "./components/layout/LabTechLayout";
 import Login from "./pages/Login";
 import PatientTable from "./components/doctor/PatientTable";
 import DoctorLayout from "./components/layout/DoctorLayout";
@@ -35,6 +35,18 @@ import ReceptionistPatientList from "./pages/Receptionist/ReceptionistPatientLis
 import AdminDashboard from "./pages/Admin/AdminDashboard";
 import AdminLayout from "./components/layout/AdminLayout";
 import AdminStaffList from "./pages/Admin/AdminStaffList";
+import AdminDoctorList from "./pages/Admin/AdminDoctorList";
+import LabTechDashboard from "./pages/LabTech/LabTechDashboard";
+import PharmacistLayout from "./components/layout/PharmacistLayout";
+import PharmacistDashboard from "./pages/Pharmacist/PharmacistDashboard";
+import TestManagement from "./pages/LabTech/TestManagement";
+import PatientReport from "./pages/LabTech/PatientReport";
+import AvailableTests from "./pages/LabTech/AvailableTests";
+import Prescriptions from "./pages/Pharmacist/Prescriptions";
+import Inventory from "./pages/Pharmacist/Inventory";
+import Billing from "./pages/Pharmacist/Billing";
+import ReceptionistAppointment from "./pages/Receptionist/ReceptionistAppointment";
+import ReceptionistBilling from "./pages/Receptionist/ReceptionistBilling";
 function Dashboard() {
     return <h1>Doctor Dashboard</h1>;
 }
@@ -49,12 +61,12 @@ function App() {
         <Routes>
 
             {/* Login */}
-            <Route path="/login" element={<Login />} />
+            <Route path="/" element={<Login />} />
 
             {/* Doctor */}
             <Route element={<DoctorLayout />}>
 
-                <Route path="/" element={<DoctorDashboard />} />
+                <Route path="/doctor/dashboard" element={<DoctorDashboard />} />
                 <Route path="/patients" element={<Patients />} />
 
             </Route>
@@ -63,7 +75,7 @@ function App() {
             <Route element={<ReceptionistLayout />}>
 
                 <Route
-                    path="/receptionist"
+                    path="/receptionist/dashboard"
                     element={<ReceptionistDashboard />}
                 />
                 
@@ -71,19 +83,27 @@ function App() {
                     path="/patientList"
                     element={<ReceptionistPatientList />}
                 />
+                    <Route
+        path="/receptionist/appointments"
+        element={<ReceptionistAppointment />}
+    />
+      <Route
+        path="/receptionist/billing"
+        element={<ReceptionistBilling />}
+    />
 
             </Route>
           <Route element={<AdminLayout />}>
 
     <Route
-        path="/admin"
+        path="/admin/dashboard"
         element={<AdminDashboard />}
     />
 
-    {/* <Route
-        path="/admin/patients"
-        element={<AdminPatientList />}
-    /> */}
+        <Route
+        path="/admin/doctors"
+        element={<AdminDoctorList />}
+    />
 
     <Route
         path="/admin/staff"
@@ -91,6 +111,52 @@ function App() {
     />
 
 </Route>
+<Route element={<LabTechLayout />}>
+
+    <Route
+        path="/lab-tech/dashboard"
+        element={<LabTechDashboard />}
+    />
+
+      <Route
+        path="/lab-tech/test-management"
+        element={<TestManagement />}
+    />
+
+    <Route
+        path="/lab-tech/patient-report"
+        element={<PatientReport />}
+    />
+      <Route
+        path="/lab-tech/available-tests"
+        element={<AvailableTests />}
+    />
+
+</Route>
+<Route element={<PharmacistLayout />}>
+
+    <Route
+        path="/pharmacist/dashboard"
+        element={<PharmacistDashboard />}
+    />
+
+       <Route
+        path="/pharmacist/prescriptions"
+        element={<Prescriptions />}
+    />
+
+       <Route
+        path="/pharmacist/inventory"
+        element={<Inventory />}
+    />
+
+     <Route
+        path="/pharmacist/billing"
+        element={<Billing />}
+    />
+
+</Route>
+
         </Routes>
     );
 }

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from doctor.models import Consultation,PrescribedLab
+from doctor.models import Consultation,PrescribedLab,Doctor
 from administrator.models import UserProfile,Staff
 from receptionist.models import Patient
 
@@ -22,6 +22,11 @@ class UserSerializer(serializers.ModelSerializer):
 class StaffSerializer(serializers.ModelSerializer):
     class Meta:
         model = Staff
+        fields = "__all__"
+class DoctorSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Doctor
         fields = "__all__"
 
 #receptionist

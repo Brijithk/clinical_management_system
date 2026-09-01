@@ -1,22 +1,21 @@
-
 import { NavLink } from "react-router-dom";
-import "./AdminSidebar.css";
+import "./LabTechSidebar.css";
 
 import dashboardIcon from "../../assets/dashboard.png";
 import patientsIcon from "../../assets/online-booking.png";
 
-function AdminSidebar() {
+function LabTechSidebar() {
     return (
-        <aside className="admin-sidebar">
+        <aside className="lab-tech-sidebar">
 
-            <nav className="admin-sidebar-menu">
+            <nav className="lab-tech-sidebar-menu">
 
                 <NavLink
-                    to="/admin/dashboard"
+                    to="/lab-tech/dashboard"
                     className={({ isActive }) =>
                         isActive
-                            ? "admin-menu-item active"
-                            : "admin-menu-item"
+                            ? "lab-tech-menu-item active"
+                            : "lab-tech-menu-item"
                     }
                 >
                     <img src={dashboardIcon} alt="" />
@@ -24,40 +23,40 @@ function AdminSidebar() {
                 </NavLink>
 
                 <NavLink
-                    to="/admin/staff"
+                    to="/lab-tech/test-management"
                     className={({ isActive }) =>
                         isActive
-                            ? "admin-menu-item active"
-                            : "admin-menu-item"
+                            ? "lab-tech-menu-item active"
+                            : "lab-tech-menu-item"
                     }
                 >
                     <img src={patientsIcon} alt="" />
-                    <span>Staff List</span>
+                    <span>Test management</span>
                 </NavLink>
 
                 <NavLink
-                    to="/admin/doctors"
+                    to="/lab-tech/patient-report"
                     className={({ isActive }) =>
                         isActive
-                            ? "admin-menu-item active"
-                            : "admin-menu-item"
+                            ? "lab-tech-menu-item active"
+                            : "lab-tech-menu-item"
                     }
                 >
                     <img src={patientsIcon} alt="" />
-                    <span>Doctor List</span>
+                    <span>Patient report</span>
                 </NavLink>
 
-                {/* <NavLink
-                    to="/patients"
+                <NavLink
+                    to="/lab-tech/available-tests"
                     className={({ isActive }) =>
                         isActive
-                            ? "admin-menu-item active"
-                            : "admin-menu-item"
+                            ? "lab-tech-menu-item active"
+                            : "lab-tech-menu-item"
                     }
                 >
                     <img src={patientsIcon} alt="" />
-                    <span>Billing</span>
-                </NavLink> */}
+                    <span>Available tests</span>
+                </NavLink>
 
             </nav>
 
@@ -65,5 +64,4 @@ function AdminSidebar() {
     );
 }
 
-export default AdminSidebar;
-
+export default LabTechSidebar;

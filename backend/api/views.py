@@ -1,8 +1,8 @@
 # from django.shortcuts import render
 # from django.http import JsonResponse
-from doctor.models import Consultation,PrescribedLab
+from doctor.models import Consultation,PrescribedLab,Doctor
 from receptionist.models import Patient 
-from .serializers import ConsultationSerializer,UserSerializer,PrescribedLabSerializer,PatientSerializer, StaffSerializer
+from .serializers import ConsultationSerializer,UserSerializer,PrescribedLabSerializer,PatientSerializer, StaffSerializer,DoctorSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -125,4 +125,16 @@ class PatientListCreateView(generics.ListCreateAPIView):
 class PatientDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Patient.objects.all()
     serializer_class = PatientSerializer
-            
+
+class DoctorListCreateView(generics.ListCreateAPIView):
+
+    queryset = Doctor.objects.all()
+
+    serializer_class = DoctorSerializer
+
+
+class DoctorDetailView(generics.RetrieveUpdateDestroyAPIView):
+
+    queryset = Doctor.objects.all()
+
+    serializer_class = DoctorSerializer

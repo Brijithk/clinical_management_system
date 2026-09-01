@@ -11,7 +11,7 @@ function DoctorSidebar() {
             <nav className="doctor-sidebar-menu">
 
                 <NavLink
-                    to="/"
+                    to="/doctor/dashboard"
                     className={({ isActive }) =>
                         isActive
                             ? "doctor-menu-item active"
@@ -34,7 +34,7 @@ function DoctorSidebar() {
                     <span>Appointments</span>
                 </NavLink>
 
-                <NavLink
+                {/* <NavLink
                     to="/patients"
                     className={({ isActive }) =>
                         isActive
@@ -44,9 +44,9 @@ function DoctorSidebar() {
                 >
                     <img src={patientsIcon} alt="" />
                     <span>Patients</span>
-                </NavLink>
+                </NavLink> */}
 
-                <NavLink
+                {/* <NavLink
                     to="/patients"
                     className={({ isActive }) =>
                         isActive
@@ -56,7 +56,7 @@ function DoctorSidebar() {
                 >
                     <img src={patientsIcon} alt="" />
                     <span>Billing</span>
-                </NavLink>
+                </NavLink> */}
             </nav>
 
         </aside>

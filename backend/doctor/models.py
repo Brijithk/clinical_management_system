@@ -88,6 +88,7 @@ class Doctor(models.Model):
         unique=True,
         editable=False
     )
+    name = models.CharField(max_length=100)
 
     # Professional Information
     department = models.CharField(

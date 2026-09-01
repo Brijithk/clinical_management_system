@@ -11,7 +11,7 @@ function ReceptionistSidebar() {
             <nav className="receptionist-sidebar-menu">
 
                 <NavLink
-                    to="/receptionist"
+                    to="/receptionist/dashboard"
                     className={({ isActive }) =>
                         isActive
                             ? "receptionist-menu-item active"
@@ -33,7 +33,28 @@ function ReceptionistSidebar() {
                     <img src={patientsIcon} alt="" />
                     <span>Patient List</span>
                 </NavLink>
-
+                   <NavLink
+                    to="/receptionist/appointments"
+                    className={({ isActive }) =>
+                        isActive
+                            ? "receptionist-menu-item active"
+                            : "receptionist-menu-item"
+                    }
+                >
+                    <img src={patientsIcon} alt="" />
+                    <span>Appointments</span>
+                </NavLink>
+            <NavLink
+                    to="/receptionist/billing"
+                    className={({ isActive }) =>
+                        isActive
+                            ? "receptionist-menu-item active"
+                            : "receptionist-menu-item"
+                    }
+                >
+                    <img src={patientsIcon} alt="" />
+                    <span>Billing</span>
+                </NavLink>
             </nav>
 
         </aside>
