@@ -3,7 +3,7 @@ import "./PatientList.css";
 import AddPatient from "./AddPatient";
 import { getPatients } from "../../services/patientService";
 import PatientDetails from "./PatientDetails";
-
+import AddAppointment from "./AddAppointment";
 function PatientList() {
 
     const [searchTerm, setSearchTerm] = useState("");
@@ -11,6 +11,7 @@ function PatientList() {
     const [patients, setPatients] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedPatient, setSelectedPatient] = useState(null);
+    const [showAppointment, setShowAppointment] = useState(false);
 
     useEffect(() => {
         const fetchPatients = async () => {
@@ -267,13 +268,25 @@ function PatientList() {
         patient={selectedPatient}
         onClose={() => setSelectedPatient(null)}
         onAddAppointment={(patient) => {
-            console.log("Add appointment:", patient);
-        }}
+    setSelectedPatient(patient);
+    setShowAppointment(true);
+}}
         onEdit={(patient) => {
             console.log("Edit patient:", patient);
         }}
         onDelete={(patient) => {
             console.log("Delete patient:", patient);
+        }}
+    />
+)}
+{showAppointment && (
+    <AddAppointment
+        patient={selectedPatient}
+        onClose={() => setShowAppointment(false)}
+        onAppointmentBooked={(appointment) => {
+            console.log("Appointment booked:", appointment);
+
+            setShowAppointment(false);
         }}
     />
 )}

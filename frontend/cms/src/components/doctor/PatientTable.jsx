@@ -1,62 +1,162 @@
-import { useState } from "react";
-import "./PatientTable.css";
 
+import { useEffect, useState } from "react";
+import "./PatientTable.css";
+import { getAppointments } from "../../services/appointmentService";
+import ConsultationPopup from "./ConsultationPopup";
+import { getConsultationByAppointment } from "../../services/consultationService";
 function PatientTable() {
 
     const [showFilter, setShowFilter] = useState(false);
     const [selectedFilter, setSelectedFilter] = useState("All");
     const [searchTerm, setSearchTerm] = useState("");
+    const [selectedAppointment, setSelectedAppointment] = useState(null);
+    const [appointments, setAppointments] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [showConsultation, setShowConsultation] = useState(false);
+    const [selectedConsultation, setSelectedConsultation] = useState(null);
+const [loadingConsultation, setLoadingConsultation] = useState(false);
 
-    const patients = [
-        {
-            name: "John Doe",
-            age: 32,
-            condition: "Fever",
-            date: "29 Aug 2026",
-            status: "Pending",
-        },
-        {
-            name: "Mary Thomas",
-            age: 45,
-            condition: "Diabetes",
-            date: "29 Aug 2026",
-            status: "In progress",
-        },
-        {
-            name: "David Wilson",
-            age: 28,
-            condition: "Headache",
-            date: "28 Aug 2026",
-            status: "Done",
-        },
-        {
-            name: "Sarah Joseph",
-            age: 51,
-            condition: "Blood Pressure",
-            date: "28 Aug 2026",
-            status: "Pending",
-        },
-        {
-            name: "Michael John",
-            age: 39,
-            condition: "Back Pain",
-            date: "27 Aug 2026",
-            status: "In progress",
-        },
-    ];
+    useEffect(() => {
 
-    const filteredPatients = patients.filter((patient) => {
+        const fetchAppointments = async () => {
 
-        const matchesStatus =
-            selectedFilter === "All" ||
-            patient.status === selectedFilter;
+            try {
 
-        const matchesSearch =
-            patient.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            patient.condition.toLowerCase().includes(searchTerm.toLowerCase());
+                const doctorId = localStorage.getItem("doctorId");
 
-        return matchesStatus && matchesSearch;
-    });
+                console.log("Logged Doctor ID:", doctorId);
+
+                if (!doctorId) {
+                    console.error("Doctor ID not found in localStorage");
+                    return;
+                }
+
+                const data = await getAppointments();
+
+                console.log("ALL APPOINTMENTS:", data);
+
+                // Only appointments for logged-in doctor
+                const doctorAppointments = data.filter(
+                    (appointment) =>
+                        String(appointment.doctor_id) === String(doctorId)
+                );
+
+                console.log(
+                    "DOCTOR APPOINTMENTS:",
+                    doctorAppointments
+                );
+
+                setAppointments(doctorAppointments);
+
+            } catch (error) {
+
+                console.error(
+                    "Error fetching appointments:",
+                    error
+                );
+
+            } finally {
+
+                setLoading(false);
+
+            }
+        };
+
+        fetchAppointments();
+
+    }, []);
+
+
+    const filteredAppointments = appointments.filter(
+        (appointment) => {
+
+            const matchesStatus =
+                selectedFilter === "All" ||
+                appointment.status === selectedFilter;
+
+            const search =
+                searchTerm.toLowerCase();
+
+            const matchesSearch =
+                String(appointment.patient_id)
+                    .toLowerCase()
+                    .includes(search) ||
+
+                String(appointment.reason)
+                    .toLowerCase()
+                    .includes(search);
+
+            return matchesStatus && matchesSearch;
+        }
+    );
+   const handleAppointmentAction = async (appointment) => {
+
+    // START NEW CONSULTATION
+    if (appointment.status === "Booked") {
+
+        setSelectedAppointment(appointment);
+        setSelectedConsultation(null);
+        setShowConsultation(true);
+
+        return;
+    }
+
+
+    // VIEW EXISTING CONSULTATION
+    if (appointment.status === "Consulted") {
+
+        try {
+
+            setLoadingConsultation(true);
+
+            const data =
+                await getConsultationByAppointment(
+                    appointment.appointment_id
+                );
+
+            console.log(
+                "CONSULTATION FOR APPOINTMENT:",
+                data
+            );
+
+
+            // API returns an array
+            if (Array.isArray(data) && data.length > 0) {
+
+                setSelectedAppointment(appointment);
+
+                setSelectedConsultation(data[0]);
+
+                setShowConsultation(true);
+
+            } else {
+
+                alert(
+                    "No consultation found for this appointment."
+                );
+
+            }
+
+        } catch (error) {
+
+            console.error(
+                "Error fetching consultation:",
+                error.response?.data || error
+            );
+
+            alert(
+                "Failed to load consultation details."
+            );
+
+        } finally {
+
+            setLoadingConsultation(false);
+
+        }
+
+    }
+
+};
 
     return (
         <div className="patient-section">
@@ -68,51 +168,69 @@ function PatientTable() {
 
                     <button
                         className={`filter-button ${
-                            showFilter ? "filter-active" : ""
+                            showFilter
+                                ? "filter-active"
+                                : ""
                         }`}
-                        onClick={() => setShowFilter(!showFilter)}
+                        onClick={() =>
+                            setShowFilter(!showFilter)
+                        }
                     >
                         <span>⚱</span>
                         Filter
                     </button>
 
                     {showFilter && (
+
                         <div className="filter-options">
 
-                            {["All", "Pending", "In progress", "Done"].map(
-                                (option) => (
-                                    <button
-                                        key={option}
-                                        className={
-                                            selectedFilter === option
-                                                ? "filter-option selected"
-                                                : "filter-option"
-                                        }
-                                        onClick={() => {
-                                            setSelectedFilter(option);
-                                            setShowFilter(false);
-                                        }}
-                                    >
-                                        {option}
-                                    </button>
-                                )
-                            )}
+                            {[
+                                "All",
+                                "Booked",
+                                "Consulted",
+                                "Cancelled"
+                            ].map((option) => (
+
+                                <button
+                                    key={option}
+                                    className={
+                                        selectedFilter === option
+                                            ? "filter-option selected"
+                                            : "filter-option"
+                                    }
+                                    onClick={() => {
+
+                                        setSelectedFilter(option);
+                                        setShowFilter(false);
+
+                                    }}
+                                >
+                                    {option}
+                                </button>
+
+                            ))}
 
                         </div>
+
                     )}
 
                 </div>
 
+
                 {/* Search */}
                 <div className="search-container">
 
-                    <span className="search-icon">⌕</span>
+                    <span className="search-icon">
+                        ⌕
+                    </span>
 
                     <input
                         type="text"
-                        placeholder="Search patients..."
+                        placeholder="Search patient..."
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onChange={(e) =>
+                            setSearchTerm(e.target.value)
+                        }
                     />
 
                 </div>
@@ -120,61 +238,216 @@ function PatientTable() {
             </div>
 
 
-            {/* Patient Table */}
-            <div className="patient-table-container">
+            {/* Loading */}
+            {loading ? (
 
-                <table>
+                <p>Loading appointments...</p>
 
-                    <thead>
-                        <tr>
-                            <th>Patient</th>
-                            <th>Age</th>
-                            <th>Condition</th>
-                            <th>Date</th>
-                            <th>Status</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
+            ) : (
 
-                    <tbody>
+                <div className="patient-table-container">
 
-                        {filteredPatients.map((patient, index) => (
+                    <table>
 
-                            <tr key={index}>
+                        <thead>
 
-                                <td>{patient.name}</td>
-                                <td>{patient.age}</td>
-                                <td>{patient.condition}</td>
-                                <td>{patient.date}</td>
-
-                                <td>
-                                    <span
-                                        className={`status ${patient.status
-                                            .toLowerCase()
-                                            .replace(" ", "-")}`}
-                                    >
-                                        {patient.status}
-                                    </span>
-                                </td>
-
-                                <td>
-                                    <button className="action-button">
-                                        {patient.status === "Pending"
-                                            ? "Start"
-                                            : "View"}
-                                    </button>
-                                </td>
-
+                            <tr>
+                                <th>Appointment ID</th>
+                                <th>Patient ID</th>
+                                <th>Token</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Reason</th>
+                                <th>Status</th>
+                                <th>Action</th>
                             </tr>
 
-                        ))}
+                        </thead>
 
-                    </tbody>
 
-                </table>
+                        <tbody>
 
-            </div>
+                            {filteredAppointments.length > 0 ? (
 
+                                filteredAppointments.map(
+                                    (appointment) => (
+
+                                        <tr
+                                            key={
+                                                appointment.appointment_id
+                                            }
+                                        >
+
+                                            <td>
+                                                {
+                                                    appointment.appointment_id
+                                                }
+                                            </td>
+
+                                            <td>
+                                                P
+                                                {String(
+                                                    appointment.patient_id
+                                                ).padStart(3, "0")}
+                                            </td>
+
+                                            <td>
+                                                {
+                                                    appointment.token_no
+                                                }
+                                            </td>
+
+                                            <td>
+                                                {
+                                                    appointment.date
+                                                }
+                                            </td>
+
+                                            <td>
+                                                {
+                                                    appointment.time
+                                                }
+                                            </td>
+
+                                            <td>
+                                                {
+                                                    appointment.reason
+                                                }
+                                            </td>
+
+                                            <td>
+
+                                                <span
+                                                    className={`status ${
+                                                        appointment.status
+                                                            ?.toLowerCase()
+                                                            .replace(
+                                                                " ",
+                                                                "-"
+                                                            )
+                                                    }`}
+                                                >
+                                                    {
+                                                        appointment.status
+                                                    }
+                                                </span>
+
+                                            </td>
+
+                                            <td>
+
+                                           <button
+    className="action-button"
+    onClick={() =>
+        handleAppointmentAction(appointment)
+    }
+    disabled={
+        loadingConsultation &&
+        selectedAppointment?.appointment_id ===
+        appointment.appointment_id
+    }
+>
+    {
+        loadingConsultation &&
+        selectedAppointment?.appointment_id ===
+        appointment.appointment_id
+            ? "Loading..."
+            : appointment.status === "Booked"
+                ? "Start"
+                : "View"
+    }
+</button>
+
+                                            </td>
+
+                                        </tr>
+
+                                    )
+                                )
+
+                            ) : (
+
+                                <tr>
+
+                                    <td
+                                        colSpan="8"
+                                        style={{
+                                            textAlign: "center",
+                                            padding: "25px"
+                                        }}
+                                    >
+                                        No appointments found
+                                    </td>
+
+                                </tr>
+
+                            )}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            )}
+{showConsultation && selectedAppointment && (
+
+    <ConsultationPopup
+
+        appointment={selectedAppointment}
+
+        consultation={selectedConsultation}
+
+        mode={
+            selectedConsultation
+                ? "view"
+                : "create"
+        }
+
+        onClose={() => {
+
+            setShowConsultation(false);
+
+            setSelectedAppointment(null);
+
+            setSelectedConsultation(null);
+
+        }}
+
+        onConsultationCompleted={(data) => {
+
+            console.log(
+                "Consultation completed:",
+                data
+            );
+
+
+            setAppointments(
+                (prevAppointments) =>
+                    prevAppointments.map(
+                        (appointment) =>
+                            appointment.appointment_id ===
+                            selectedAppointment.appointment_id
+                                ? {
+                                    ...appointment,
+                                    status: "Consulted"
+                                }
+                                : appointment
+                    )
+            );
+
+
+            setShowConsultation(false);
+
+            setSelectedAppointment(null);
+
+            setSelectedConsultation(null);
+
+        }}
+
+    />
+
+)}
         </div>
     );
 }

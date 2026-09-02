@@ -1,10 +1,10 @@
-
+import AddAppointment from "./AddAppointment";
 import "./PatientDetails.css";
 
 function PatientDetails({ patient, onClose, onEdit, onDelete, onAddAppointment }) {
 
     if (!patient) return null;
-
+      
     return (
         <div className="patient-details-overlay">
 

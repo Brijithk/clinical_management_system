@@ -9,7 +9,7 @@ function LabTechHeader() {
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        navigate("/login");
+        navigate("/");
     };
 
     return (

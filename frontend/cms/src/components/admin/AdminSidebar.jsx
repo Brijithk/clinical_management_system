@@ -47,8 +47,8 @@ function AdminSidebar() {
                     <span>Doctor List</span>
                 </NavLink>
 
-                {/* <NavLink
-                    to="/patients"
+                <NavLink
+                    to="/admin/medicines"
                     className={({ isActive }) =>
                         isActive
                             ? "admin-menu-item active"
@@ -56,9 +56,20 @@ function AdminSidebar() {
                     }
                 >
                     <img src={patientsIcon} alt="" />
-                    <span>Billing</span>
-                </NavLink> */}
-
+                    <span>Medicine List</span>
+                </NavLink>
+          {/* /admin/tests */}
+            <NavLink
+                    to="/admin/tests"
+                    className={({ isActive }) =>
+                        isActive
+                            ? "admin-menu-item active"
+                            : "admin-menu-item"
+                    }
+                >
+                    <img src={patientsIcon} alt="" />
+                    <span>Lab Test List</span>
+                </NavLink>
             </nav>
 
         </aside>

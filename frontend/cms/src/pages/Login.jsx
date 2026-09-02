@@ -48,7 +48,7 @@ import { useNavigate } from "react-router-dom";
 
 import "./Login.css";
 import logo from "../assets/hospital_logo.png";
-
+import { loginUser } from "../services/loginService";
 function Login() {
 
     const navigate = useNavigate();
@@ -56,20 +56,40 @@ function Login() {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleLogin = (e) => {
+    const handleLogin = async(e) => {
         e.preventDefault();
-
-        if (username === "doctor") {
-            navigate("/");
-        }
-        else if (username === "receptionist") {
-            navigate("/receptionist");
-        }
-        else if (username === "admin") {
-            navigate("/admin");
+//   navigate("/doctor/dashboard");
+        if (username === "admin") {
+              navigate("/admin/dashboard");
         }
         else {
-            alert("Invalid username");
+             const data = await loginUser({
+    username,
+    password
+});
+localStorage.setItem("userId", data.id);
+localStorage.setItem("userName", data.name);
+localStorage.setItem("userRole", data.role);
+
+if (data.doctor_id) {
+    localStorage.setItem("doctorId", data.doctor_id);
+}
+
+if (data.staff_id) {
+    localStorage.setItem("staffId", data.staff_id);
+}
+            if (data.role === "doctor") {
+                        navigate("/doctor/dashboard");
+                    }
+                    else if (data.role === "reception") {
+                        navigate("/receptionist/dashboard");
+                    }
+                    else if (data.role === "pharmacy") {
+                        navigate("/pharmacist/dashboard");
+                    }
+                    else if (data.role === "lab") {
+                        navigate("/lab-tech/dashboard");
+                    }
         }
     };
 

@@ -1,15 +1,17 @@
 # from django.shortcuts import render
 # from django.http import JsonResponse
 from doctor.models import Consultation,PrescribedLab,Doctor
-from receptionist.models import Patient 
-from .serializers import ConsultationSerializer,UserSerializer,PrescribedLabSerializer,PatientSerializer, StaffSerializer,DoctorSerializer
+from receptionist.models import Patient ,Appointment
+from .serializers import LabTestSerializer,MedicineSerializer,AppointmentSerializer,ConsultationSerializer,UserSerializer,PrescribedLabSerializer,PatientSerializer, StaffSerializer,DoctorSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
-from administrator.models import User,Staff
+from administrator.models import User,Staff,Medicine,LabTest
 from django.http import Http404
 from rest_framework import mixins,generics
+from doctor.models import Consultation
+from rest_framework import viewsets
 # Create your views here.
 
 @api_view(['GET','POST'])
@@ -138,3 +140,182 @@ class DoctorDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Doctor.objects.all()
 
     serializer_class = DoctorSerializer
+
+class LoginView(APIView):
+
+    def post(self, request):
+
+        username = request.data.get("username")
+        password = request.data.get("password")
+
+        # Check Doctor
+        try:
+            doctor = Doctor.objects.get(username=username)
+
+            if doctor.password == password:
+
+                return Response({
+                    "id": doctor.id,
+                    "name": doctor.name,
+                    "role": "doctor",
+                    "doctor_id": doctor.doctor_id
+                })
+
+        except Doctor.DoesNotExist:
+            pass
+
+
+        # Check Staff
+        try:
+            staff = Staff.objects.get(username=username)
+
+            if staff.password == password:
+
+                return Response({
+                    "id": staff.id,
+                    "name": staff.name,
+                    "role": staff.department.lower(),
+                    "staff_id": staff.staff_id
+                })
+
+        except Staff.DoesNotExist:
+            pass
+
+
+        return Response(
+            {"message": "Invalid username or password"},
+            status=401
+        )
+
+class AppointmentListCreateView(generics.ListCreateAPIView):
+
+    queryset = Appointment.objects.all()
+
+    serializer_class = AppointmentSerializer
+
+
+class AppointmentDetailView(generics.RetrieveUpdateDestroyAPIView):
+
+    queryset = Appointment.objects.all()
+
+    serializer_class = AppointmentSerializer
+
+class MedicineListCreateView(generics.ListCreateAPIView):
+    queryset = Medicine.objects.all().order_by("-id")
+    serializer_class = MedicineSerializer
+
+
+class MedicineDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Medicine.objects.all()
+    serializer_class = MedicineSerializer
+    lookup_field = "medicine_id"
+
+class LabTestListCreateView(generics.ListCreateAPIView):
+    queryset = LabTest.objects.all()
+    serializer_class = LabTestSerializer
+
+
+class LabTestDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = LabTest.objects.all()
+    serializer_class = LabTestSerializer
+    lookup_field = "pk"
+
+class ConsultationViewSet(viewsets.ModelViewSet):
+
+    queryset = Consultation.objects.all().order_by("-consultation_id")
+    serializer_class = ConsultationSerializer
+
+    def get_queryset(self):
+
+        queryset = Consultation.objects.all().order_by(
+            "-consultation_id"
+        )
+
+        appointment_id = self.request.query_params.get(
+            "appointment"
+        )
+
+        if appointment_id:
+            queryset = queryset.filter(
+                appointment=appointment_id
+            )
+
+        return queryset
+    def create(self, request, *args, **kwargs):
+
+        print("CONSULTATION REQUEST DATA:")
+        print(request.data)
+
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+
+            consultation = serializer.save()
+
+            # Get appointment ID from consultation
+            appointment_id = consultation.appointment
+
+            try:
+                appointment = Appointment.objects.get(
+                    appointment_id=appointment_id
+                )
+
+                appointment.status = "Consulted"
+                appointment.save()
+
+                print(
+                    f"Appointment {appointment_id} status updated to Consulted"
+                )
+
+            except Appointment.DoesNotExist:
+
+                print(
+                    f"Appointment {appointment_id} not found"
+                )
+
+            response_serializer = self.get_serializer(
+                consultation
+            )
+
+            return Response(
+                response_serializer.data,
+                status=status.HTTP_201_CREATED
+            )
+
+        print("CONSULTATION VALIDATION ERROR:")
+        print(serializer.errors)
+
+        return Response(
+            serializer.errors,
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    # def create(self, request, *args, **kwargs):
+
+    #     print("CONSULTATION REQUEST DATA:")
+    #     print(request.data)
+
+    #     serializer = self.get_serializer(
+    #         data=request.data
+    #     )
+
+    #     if serializer.is_valid():
+
+    #         consultation = serializer.save()
+
+    #         response_serializer = self.get_serializer(
+    #             consultation
+    #         )
+
+    #         return Response(
+    #             response_serializer.data,
+    #             status=status.HTTP_201_CREATED
+    #         )
+
+    #     print("CONSULTATION VALIDATION ERROR:")
+    #     print(serializer.errors)
+
+    #     return Response(
+    #         serializer.errors,
+    #         status=status.HTTP_400_BAD_REQUEST
+    #     )
