@@ -112,12 +112,19 @@ class PrescribedLabView(mixins.ListModelMixin,mixins.CreateModelMixin,generics.G
     def post(self,request):
         return self.create(request)
 
-class PrescribedLabDetailView(mixins.RetrieveModelMixin,generics.GenericAPIView):
-    queryset=PrescribedLab.objects.all()
+class PrescribedLabDetailView(
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    generics.GenericAPIView
+       ):
+    queryset = PrescribedLab.objects.all()
     serializer_class = PrescribedLabSerializer
 
-    def get(self,request,pk):
-        return self.retrieve(request,pk)
+    def get(self, request, pk):
+        return self.retrieve(request, pk)
+
+    def patch(self, request, pk):
+        return self.partial_update(request, pk)
 
 #receptionist
 class PatientListCreateView(generics.ListCreateAPIView):
@@ -261,7 +268,7 @@ class ConsultationViewSet(viewsets.ModelViewSet):
                 )
 
                 appointment.status = "Consulted"
-                appointment.save()
+                appointment.save(update_fields=["status"])
 
                 print(
                     f"Appointment {appointment_id} status updated to Consulted"

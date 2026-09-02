@@ -67,10 +67,23 @@ class PrescribedLab(models.Model):
         blank=True
     )
 
-    test_id = models.IntegerField()
+    test_id = models.CharField(
+        max_length=20
+    )
+    
 
     test_name = models.CharField(
         max_length=200
+    )
+
+    results = models.JSONField(
+        default=dict,
+        blank=True
+    )
+
+    technician_notes = models.TextField(
+        blank=True,
+        null=True
     )
 
     class Status(models.TextChoices):
@@ -85,6 +98,8 @@ class PrescribedLab(models.Model):
 
     def __str__(self):
         return f"{self.test_name} - {self.status}"
+
+
 # class PrescribedLab(models.Model):
 
 #     lab_prescription_id = models.AutoField(
