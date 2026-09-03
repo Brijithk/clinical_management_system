@@ -67,10 +67,23 @@ class PrescribedLab(models.Model):
         blank=True
     )
 
-    test_id = models.IntegerField()
+    test_id = models.CharField(
+        max_length=20
+    )
+    
 
     test_name = models.CharField(
         max_length=200
+    )
+
+    results = models.JSONField(
+        default=dict,
+        blank=True
+    )
+
+    technician_notes = models.TextField(
+        blank=True,
+        null=True
     )
 
     class Status(models.TextChoices):
@@ -85,6 +98,8 @@ class PrescribedLab(models.Model):
 
     def __str__(self):
         return f"{self.test_name} - {self.status}"
+
+
 # class PrescribedLab(models.Model):
 
 #     lab_prescription_id = models.AutoField(
@@ -128,17 +143,16 @@ class PrescribedMedicine(models.Model):
         blank=True
     )
 
-    medicine_id = models.CharField(
-        max_length=20
+    medicine_id = models.CharField(max_length=20)
+    medicine_name = models.CharField(max_length=150)
+
+    price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0
     )
 
-    medicine_name = models.CharField(
-        max_length=150
-    )
-
-    dosage = models.CharField(
-        max_length=100
-    )
+    dosage = models.CharField(max_length=100)
 
     morning = models.BooleanField(default=False)
     afternoon = models.BooleanField(default=False)
@@ -156,8 +170,17 @@ class PrescribedMedicine(models.Model):
         null=True
     )
 
-    duration = models.CharField(
-        max_length=100
+    duration = models.CharField(max_length=100)
+
+    STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("completed", "Completed"),
+    ]
+
+    status = models.CharField(
+        max_length=20,
+        choices=STATUS_CHOICES,
+        default="pending"
     )
 
     def __str__(self):
@@ -350,3 +373,55 @@ class Doctor(models.Model):
 
     def __str__(self):
         return f"{self.doctor_id} - {self.username}"
+
+class Bill(models.Model):
+
+    PAYMENT_STATUS_CHOICES = [
+        ("pending", "Pending"),
+        ("paid", "Paid"),
+    ]
+
+    PAYMENT_METHOD_CHOICES = [
+        ("Cash", "Cash"),
+        ("UPI", "UPI"),
+        ("Card", "Card"),
+        ("Net Banking", "Net Banking"),
+    ]
+
+    bill_id = models.AutoField(
+        primary_key=True
+    )
+
+    consultation = models.ForeignKey(
+        Consultation,
+        on_delete=models.CASCADE,
+        related_name="bills"
+    )
+
+    patient_id = models.IntegerField()
+
+    amount = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=0
+    )
+
+    payment_status = models.CharField(
+        max_length=20,
+        choices=PAYMENT_STATUS_CHOICES,
+        default="pending"
+    )
+
+    payment_method = models.CharField(
+        max_length=30,
+        choices=PAYMENT_METHOD_CHOICES,
+        blank=True,
+        null=True
+    )
+
+    bill_date = models.DateTimeField(
+        auto_now_add=True
+    )
+
+    def __str__(self):
+        return f"BILL{self.bill_id:03d}"

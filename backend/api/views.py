@@ -1,8 +1,8 @@
 # from django.shortcuts import render
 # from django.http import JsonResponse
-from doctor.models import Consultation,PrescribedLab,Doctor
+from doctor.models import Consultation,PrescribedLab,Doctor,PrescribedMedicine
 from receptionist.models import Patient ,Appointment
-from .serializers import LabTestSerializer,MedicineSerializer,AppointmentSerializer,ConsultationSerializer,UserSerializer,PrescribedLabSerializer,PatientSerializer, StaffSerializer,DoctorSerializer
+from .serializers import BillSerializer,PrescribedMedicineSerializer,LabTestSerializer,MedicineSerializer,AppointmentSerializer,ConsultationSerializer,UserSerializer,PrescribedLabSerializer,PatientSerializer, StaffSerializer,DoctorSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -10,7 +10,7 @@ from rest_framework.views import APIView
 from administrator.models import User,Staff,Medicine,LabTest
 from django.http import Http404
 from rest_framework import mixins,generics
-from doctor.models import Consultation
+from doctor.models import Consultation,Bill
 from rest_framework import viewsets
 # Create your views here.
 
@@ -112,12 +112,19 @@ class PrescribedLabView(mixins.ListModelMixin,mixins.CreateModelMixin,generics.G
     def post(self,request):
         return self.create(request)
 
-class PrescribedLabDetailView(mixins.RetrieveModelMixin,generics.GenericAPIView):
-    queryset=PrescribedLab.objects.all()
+class PrescribedLabDetailView(
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    generics.GenericAPIView
+       ):
+    queryset = PrescribedLab.objects.all()
     serializer_class = PrescribedLabSerializer
 
-    def get(self,request,pk):
-        return self.retrieve(request,pk)
+    def get(self, request, pk):
+        return self.retrieve(request, pk)
+
+    def patch(self, request, pk):
+        return self.partial_update(request, pk)
 
 #receptionist
 class PatientListCreateView(generics.ListCreateAPIView):
@@ -261,7 +268,7 @@ class ConsultationViewSet(viewsets.ModelViewSet):
                 )
 
                 appointment.status = "Consulted"
-                appointment.save()
+                appointment.save(update_fields=["status"])
 
                 print(
                     f"Appointment {appointment_id} status updated to Consulted"
@@ -319,3 +326,36 @@ class ConsultationViewSet(viewsets.ModelViewSet):
     #         serializer.errors,
     #         status=status.HTTP_400_BAD_REQUEST
     #     )
+
+class PrescribedMedicineListView(generics.ListAPIView):
+    queryset = PrescribedMedicine.objects.all()
+    serializer_class = PrescribedMedicineSerializer
+
+class PrescribedMedicineDetailView(
+    generics.RetrieveUpdateAPIView
+     ):
+    queryset = PrescribedMedicine.objects.all()
+    serializer_class = PrescribedMedicineSerializer
+
+class PrescribedMedicineByConsultationView(generics.ListAPIView):
+
+    serializer_class = PrescribedMedicineSerializer
+
+    def get_queryset(self):
+        consultation_id = self.kwargs["consultation_id"]
+
+        return PrescribedMedicine.objects.filter(
+            consultation_id=consultation_id
+        )
+
+
+class BillListCreateView(generics.ListCreateAPIView):
+
+    queryset = Bill.objects.all()
+    serializer_class = BillSerializer
+
+
+class BillDetailView(generics.RetrieveAPIView):
+
+    queryset = Bill.objects.all()
+    serializer_class = BillSerializer

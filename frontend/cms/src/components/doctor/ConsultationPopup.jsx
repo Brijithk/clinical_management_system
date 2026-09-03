@@ -26,7 +26,7 @@ function ConsultationPopup({
     const [formData, setFormData] = useState({
         appointment: appointment?.appointment_id || "",
         patient_id: appointment?.patient_id || "",
-        doctor_id: localStorage.getItem("doctor_id") || "",
+        doctor_id: localStorage.getItem("doctorId") || "",
 
         symptoms: appointment?.reason || "",
         diagnosis: "",
@@ -271,21 +271,15 @@ function ConsultationPopup({
     /* ADD TEST */
     /* ============================= */
 
-    const addTestRow = () => {
-
-        setPrescribedTests((prev) => [
-
-            ...prev,
-
-            {
-                test_id: "",
-                test_name: "",
-                status: "pending"
-            }
-
-        ]);
-
-    };
+   const addTestRow = () => {
+    setPrescribedTests((prev) => [
+        ...prev,
+        {
+            test_id: "",
+            test_name: ""
+        }
+    ]);
+};
 
 
     /* ============================= */
@@ -305,180 +299,151 @@ function ConsultationPopup({
     /* SELECT TEST */
     /* ============================= */
 
-    const handleTestSelect = (
-        index,
-        testId
-    ) => {
+const handleTestSelect = (index, testId) => {
+    const selectedTest = tests.find(
+        (test) => String(test.test_id) === String(testId)
+    );
 
-        const selectedTest =
-            tests.find(
-                (test) =>
-                    String(test.test_id) ===
-                    String(testId)
-            );
+    if (!selectedTest) return;
 
-        if (!selectedTest) {
-            return;
-        }
+    setPrescribedTests((prev) => {
+        const updated = [...prev];
 
-        setPrescribedTests((prev) => {
+        updated[index] = {
+            ...updated[index],
+            test_id: selectedTest.test_id,
+            test_name: selectedTest.test_name,
+        };
 
-            const updated = [...prev];
-
-            updated[index] = {
-
-                ...updated[index],
-
-                test_id:
-                    selectedTest.test_id,
-
-                test_name:
-                    selectedTest.test_name
-
-            };
-
-            return updated;
-
-        });
-
-    };
+        return updated;
+    });
+};
 
 
     /* ============================= */
     /* TEST STATUS CHANGE */
     /* ============================= */
 
-    const handleTestStatusChange = (
-        index,
-        value
-    ) => {
-
-        setPrescribedTests((prev) => {
-
-            const updated = [...prev];
-
-            updated[index] = {
-
-                ...updated[index],
-
-                status: value
-
-            };
-
-            return updated;
-
-        });
-
-    };
+   
 
 
     /* ============================= */
     /* SUBMIT */
     /* ============================= */
 
-    const handleSubmit = async (e) => {
+   const handleSubmit = async (e) => {
 
-        e.preventDefault();
+    e.preventDefault();
 
-        try {
+    try {
 
-            setSaving(true);
+        setSaving(true);
 
+        const consultationData = {
 
-            const consultationData = {
+            appointment:
+                formData.appointment,
 
-                appointment:
-                    formData.appointment,
+            patient_id:
+                Number(formData.patient_id),
 
-                patient_id:
-                    Number(formData.patient_id),
+            doctor_id:
+                formData.doctor_id,
 
-                doctor_id:
-                    formData.doctor_id,
+            symptoms:
+                formData.symptoms,
 
-                symptoms:
-                    formData.symptoms,
+            diagnosis:
+                formData.diagnosis,
 
-                diagnosis:
-                    formData.diagnosis,
+            doctor_notes:
+                formData.doctor_notes,
 
-                doctor_notes:
-                    formData.doctor_notes,
+            medical_advice:
+                formData.medical_advice,
 
-                medical_advice:
-                    formData.medical_advice,
+            consultation_date:
+                formData.consultation_date,
 
-                consultation_date:
-                    formData.consultation_date,
+            follow_up_date:
+                formData.follow_up_date || null,
 
-                follow_up_date:
-                    formData.follow_up_date || null,
+            notes:
+                formData.notes,
 
-                notes:
-                    formData.notes,
+            prescribed_medicines:
+                prescribedMedicines,
 
-                prescribed_medicines:
-                    prescribedMedicines,
+            prescribed_tests:
+                prescribedTests
+                    .filter(
+                        (test) =>
+                            test.test_id !== "" &&
+                            test.test_id !== null &&
+                            test.test_id !== undefined
+                    )
+                    .map((test) => ({
+                        test_id: test.test_id
+                    }))
+        };
 
-                prescribed_tests:
-                    prescribedTests
+        console.log(
+            "CONSULTATION DATA:",
+            consultationData
+        );
 
-            };
+        console.log(
+            "TEST PAYLOAD:",
+            JSON.stringify(
+                consultationData.prescribed_tests,
+                null,
+                2
+            )
+        );
 
+        const data = await createConsultation(
+            consultationData
+        );
 
-            console.log(
-                "CONSULTATION DATA:",
-                consultationData
-            );
+        console.log(
+            "CONSULTATION CREATED:",
+            data
+        );
 
-
-            const data =
-                await createConsultation(
-                    consultationData
-                );
-
-
-            console.log(
-                "CONSULTATION CREATED:",
-                data
-            );
-
-
-            if (onConsultationCompleted) {
-
-                onConsultationCompleted(data);
-
-            }
-
-
-            alert(
-                "Consultation completed successfully!"
-            );
-
-            onClose();
-
-
-        } catch (error) {
-
-            console.error(
-                "CONSULTATION ERROR:",
-                error.response?.data || error
-            );
-
-            alert(
-                JSON.stringify(
-                    error.response?.data ||
-                    "Failed to save consultation."
-                )
-            );
-
-        } finally {
-
-            setSaving(false);
-
+        if (onConsultationCompleted) {
+            onConsultationCompleted(data);
         }
 
-    };
+        alert(
+            "Consultation completed successfully!"
+        );
+
+        onClose();
+
+    } catch (error) {
+
+        console.log(
+            "CONSULTATION ERROR FULL:",
+            JSON.stringify(
+                error.response?.data || error,
+                null,
+                2
+            )
+        );
+
+        alert(
+            JSON.stringify(
+                error.response?.data ||
+                "Failed to save consultation."
+            )
+        );
+
+    } finally {
+
+        setSaving(false);
+
+    }
+};
 
 
     return (
@@ -1156,35 +1121,6 @@ function ConsultationPopup({
                                             </div>
 
 
-                                            <div className="form-group">
-
-                                                <label>
-                                                    Status
-                                                </label>
-
-                                                <select
-                                                    value={
-                                                        test.status
-                                                    }
-                                                    onChange={(e) =>
-                                                        handleTestStatusChange(
-                                                            index,
-                                                            e.target.value
-                                                        )
-                                                    }
-                                                >
-
-                                                    <option value="pending">
-                                                        Pending
-                                                    </option>
-
-                                                    <option value="completed">
-                                                        Completed
-                                                    </option>
-
-                                                </select>
-
-                                            </div>
 
 
                                             <button

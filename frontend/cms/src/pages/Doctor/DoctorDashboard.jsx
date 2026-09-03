@@ -23,13 +23,13 @@ function DoctorDashboard() {
 
                 <StatCard
                     image={doctor_icon}
-                    title="Appointments"
+                    title="Pending Appointments"
                     value="156"
                 />
 
                 <StatCard
                     image={patient_icon}
-                    title="Consultations"
+                    title=" Completed Consultations "
                     value="89"
                 />
 
