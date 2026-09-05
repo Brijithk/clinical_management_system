@@ -623,6 +623,8 @@ const generateBill = (paymentMethod,
 
                             <th>Duration</th>
 
+                            <th>Available Stock</th>
+
                             <th>Price</th>
 
                         </tr>
@@ -667,6 +669,10 @@ const generateBill = (paymentMethod,
                                             ${medicine.duration}
                                         </td>
 
+
+                                         <td>
+    ${medicine.stock_quantity ?? 0}
+</td>
                                         <td class="price">
                                             ₹${price.toFixed(2)}
                                         </td>
@@ -855,7 +861,7 @@ const generateBill = (paymentMethod,
                                         <th>
                                             Duration
                                         </th>
-
+                                         <th>Available Stock</th>
                                         <th>
                                             Price
                                         </th>
@@ -865,61 +871,53 @@ const generateBill = (paymentMethod,
                                 </thead>
 
 
-                                <tbody>
+                             <tbody>
 
-                                    {medicines.map(
-                                        (medicine) => (
+    {medicines.map((medicine) => (
 
-                                            <tr
-                                                key={
-                                                    medicine.prescription_id
-                                                }
-                                            >
+        <tr
+            key={medicine.prescription_id}
+        >
 
-                                                <td>
-                                                    {
-                                                        medicine.medicine_name ||
-                                                        "-"
-                                                    }
-                                                </td>
+            <td>
+                {medicine.medicine_name || "-"}
+            </td>
 
-                                                <td>
-                                                    {
-                                                        medicine.dosage ||
-                                                        "-"
-                                                    }
-                                                </td>
+            <td>
+                {medicine.dosage || "-"}
+            </td>
 
-                                                <td>
-                                                    {
-                                                        getTiming(
-                                                            medicine
-                                                        )
-                                                    }
-                                                </td>
+            <td>
+                {getTiming(medicine)}
+            </td>
 
-                                                <td>
-                                                    {
-                                                        medicine.duration ||
-                                                        "-"
-                                                    }
-                                                </td>
+            <td>
+                {medicine.duration || "-"}
+            </td>
 
-                                                <td>
-                                                    ₹
-                                                    {
-                                                        getPrice(
-                                                            medicine.medicine_id
-                                                        )
-                                                    }
-                                                </td>
+            <td>
+                <span
+                    className={
+                        Number(medicine.stock_quantity || 0) === 0
+                            ? "stock-out"
+                            : Number(medicine.stock_quantity || 0) <= 10
+                                ? "stock-low"
+                                : "stock-available"
+                    }
+                >
+                    {medicine.stock_quantity ?? 0}
+                </span>
+            </td>
 
-                                            </tr>
+            <td>
+                ₹{Number(medicine.price || 0).toFixed(2)}
+            </td>
 
-                                        )
-                                    )}
+        </tr>
 
-                                </tbody>
+    ))}
+
+</tbody>
 
                             </table>
 
@@ -983,7 +981,7 @@ const generateBill = (paymentMethod,
             </span>
 
             <strong>
-                ₹{total.toFixed(2)}
+                ₹{totalAmount.toFixed(2)}
             </strong>
 
         </div>
@@ -1080,7 +1078,7 @@ const generateBill = (paymentMethod,
                 className="pay-btn"
                 onClick={handlePayment}
             >
-                Pay ₹{total.toFixed(2)}
+                Pay ₹{totalAmount.toFixed(2)}
             </button>
 
         </div>
@@ -1103,7 +1101,7 @@ const generateBill = (paymentMethod,
         </h3>
 
         <p>
-            ₹{total.toFixed(2)} paid successfully
+            ₹{totalAmount.toFixed(2)} paid successfully
         </p>
 
         <p>
