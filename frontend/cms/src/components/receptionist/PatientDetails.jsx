@@ -212,14 +212,14 @@ function PatientDetails({
                             </button>
 
 
-                            <button
+                            {/* <button
                                 className="delete-button"
                                 onClick={() =>
                                     onDelete(patient)
                                 }
                             >
                                 Delete
-                            </button>
+                            </button> */}
 
 
                             <button

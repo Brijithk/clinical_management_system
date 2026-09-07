@@ -15,6 +15,13 @@
     z-index: 1000;
 }
 
+.field-error {
+    display: block;
+    margin-top: 4px;
+    color: #dc3545;
+    font-size: 12px;
+}
+
 .add-patient-card {
     width: 600px;
     max-height: 90vh;

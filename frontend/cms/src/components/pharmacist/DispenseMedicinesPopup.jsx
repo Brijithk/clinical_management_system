@@ -256,24 +256,30 @@ const handlePayment = async () => {
 
         // console.log("BILL CREATED:", bill);
 
-   const bill = await createBill({
+//    const bill = await createBill({
+//     consultation_id: prescription.consultation_id,
+//     patient_id: prescription.patient_id,
+//     amount: totalAmount,
+//     payment_status: "paid",
+//     payment_method: paymentMethod
+// });
+
+const bill = await createBill({
     consultation_id: prescription.consultation_id,
     patient_id: prescription.patient_id,
-    amount: totalAmount,
-    payment_status: "paid",
     payment_method: paymentMethod
 });
 
 setCreatedBill(bill);
 
-        for (const medicine of medicines) {
+        // for (const medicine of medicines) {
 
-            await updatePrescribedMedicineStatus(
-                medicine.prescription_id,
-                "completed"
-            );
+        //     await updatePrescribedMedicineStatus(
+        //         medicine.prescription_id,
+        //         "completed"
+        //     );
 
-        }
+        // }
 
         setPaymentCompleted(true);
 

@@ -59,24 +59,40 @@ function PatientList() {
         return age;
     };
 
+    // const filteredPatients = patients.filter((patient) => {
+
+    //     const search = searchTerm.toLowerCase();
+
+    //     return (
+    //         String(patient.patient_id)
+    //             .toLowerCase()
+    //             .includes(search) ||
+
+    //         String(patient.full_name)
+    //             .toLowerCase()
+    //             .includes(search) ||
+
+    //         String(patient.phone)
+    //             .toLowerCase()
+    //             .includes(search)
+    //     );
+    // });
+
     const filteredPatients = patients.filter((patient) => {
 
-        const search = searchTerm.toLowerCase();
+    const search = searchTerm.trim().toLowerCase();
 
-        return (
-            String(patient.patient_id)
-                .toLowerCase()
-                .includes(search) ||
+    const patientId = `P${String(patient.patient_id).padStart(3, "0")}`;
+    const patientName = String(patient.full_name || "").toLowerCase();
 
-            String(patient.full_name)
-                .toLowerCase()
-                .includes(search) ||
-
-            String(patient.phone)
-                .toLowerCase()
-                .includes(search)
-        );
-    });
+    return (
+        patientId.toLowerCase().includes(search) ||
+        String(patient.patient_id)
+            .toLowerCase()
+            .includes(search) ||
+        patientName.includes(search)
+    );
+});
 
     const handleViewPatient = (patient) => {
         console.log("View patient:", patient);
@@ -135,7 +151,7 @@ function PatientList() {
                                 <th>Age</th>
                                 <th>Gender</th>
                                 <th>Phone</th>
-                                <th>Last Visit</th>
+                                {/* <th>Last Visit</th> */}
                                 <th>Status</th>
                                 <th>Action</th>
                             </tr>
@@ -172,9 +188,7 @@ function PatientList() {
                                             {patient.phone}
                                         </td>
 
-                                        <td>
-                                            -
-                                        </td>
+                                        
 
                                         <td>
 
@@ -212,7 +226,7 @@ function PatientList() {
                                 <tr>
 
                                     <td
-                                        colSpan="8"
+                                        colSpan="7"
                                         style={{
                                             textAlign: "center",
                                             padding: "25px"
