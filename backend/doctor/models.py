@@ -104,7 +104,7 @@ class PrescribedLab(models.Model):
 
 #     lab_prescription_id = models.AutoField(
 #         primary_key=True
-#     )
+#     )gygyjbnvgvj
 
 #     consultation_id = models.IntegerField()
 
